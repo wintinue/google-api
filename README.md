@@ -2,6 +2,8 @@
 
 로컬에서 Google OAuth 인증을 받고, 저장된 토큰으로 Google REST API를 호출하는 Kotlin/Ktor 서버입니다. Google Business Profile `categories.list`, `categories:batchGet` 전용 엔드포인트도 포함되어 있습니다.
 
+Swagger UI는 `http://localhost:8080/swagger` 에서 확인할 수 있습니다.
+
 ## Run
 
 ```bash
@@ -9,6 +11,26 @@ GRADLE_USER_HOME=.gradle-home ./gradlew run
 ```
 
 기본 주소는 `http://localhost:8080` 입니다.
+
+개발 모드 실행:
+
+```bash
+GRADLE_USER_HOME=.gradle-home ./gradlew runDev
+```
+
+코드 저장 시 자동 재시작까지 원하면:
+
+```bash
+GRADLE_USER_HOME=.gradle-home ./gradlew runDev --continuous
+```
+
+이 경우 소스가 바뀌면 Gradle이 다시 빌드하고 서버 프로세스를 재시작합니다.
+
+API 문서:
+
+```text
+http://localhost:8080/swagger
+```
 
 ## OAuth flow
 
@@ -60,6 +82,15 @@ curl "http://localhost:8080/api/v1/business-profile/categories?regionCode=KR&lan
 ```bash
 curl "http://localhost:8080/api/v1/business-profile/categories/batch-get?languageCode=ko&view=FULL&names=categories/gcid:restaurant&names=categories/gcid:cafe"
 ```
+
+## Postman
+
+Import files:
+
+- `postman/GoogleApi.postman_collection.json`
+- `postman/GoogleApi.local.postman_environment.json`
+
+카테고리 조회는 컬렉션의 `Business Profile` 폴더에서 바로 실행할 수 있습니다.
 
 ## Environment variables
 

@@ -4,6 +4,8 @@ plugins {
     application
 }
 
+import org.gradle.api.tasks.JavaExec
+
 group = "org.example"
 version = "1.0-SNAPSHOT"
 
@@ -15,6 +17,7 @@ dependencies {
     implementation("io.ktor:ktor-server-core-jvm:2.3.12")
     implementation("io.ktor:ktor-server-netty-jvm:2.3.12")
     implementation("io.ktor:ktor-server-content-negotiation-jvm:2.3.12")
+    implementation("io.ktor:ktor-server-swagger-jvm:2.3.12")
     implementation("io.ktor:ktor-serialization-kotlinx-json-jvm:2.3.12")
     implementation("io.ktor:ktor-client-core-jvm:2.3.12")
     implementation("io.ktor:ktor-client-cio-jvm:2.3.12")
@@ -30,6 +33,18 @@ tasks.test {
 
 application {
     mainClass.set("org.example.MainKt")
+}
+
+tasks.named<JavaExec>("run") {
+    systemProperty("io.ktor.development", "false")
+}
+
+tasks.register<JavaExec>("runDev") {
+    group = "application"
+    description = "Runs the app in Ktor development mode."
+    classpath = sourceSets["main"].runtimeClasspath
+    mainClass.set(application.mainClass)
+    systemProperty("io.ktor.development", "true")
 }
 
 kotlin {
