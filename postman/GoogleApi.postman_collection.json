@@ -1,0 +1,261 @@
+{
+  "info": {
+    "_postman_id": "b3118715-49e6-485d-ab26-004f47735414",
+    "name": "GoogleApi Local OAuth Server",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Local Ktor server for Google OAuth authorization, token status checks, and proxied Google API calls."
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "scopes",
+      "value": "openid,https://www.googleapis.com/auth/userinfo.email,https://www.googleapis.com/auth/userinfo.profile,https://www.googleapis.com/auth/business.manage"
+    },
+    {
+      "key": "googleApiUrl",
+      "value": "https://www.googleapis.com/oauth2/v2/userinfo"
+    },
+    {
+      "key": "googleApiMethod",
+      "value": "GET"
+    },
+    {
+      "key": "googleApiBody",
+      "value": "{}"
+    },
+    {
+      "key": "regionCode",
+      "value": "KR"
+    },
+    {
+      "key": "languageCode",
+      "value": "ko"
+    },
+    {
+      "key": "categoryView",
+      "value": "BASIC"
+    },
+    {
+      "key": "categorySearchTerm",
+      "value": "카페"
+    },
+    {
+      "key": "categoryNames",
+      "value": "categories/gcid:cafe,categories/gcid:restaurant"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            ""
+          ]
+        },
+        "description": "Server metadata and available local OAuth endpoints."
+      },
+      "response": []
+    },
+    {
+      "name": "Start Google OAuth",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/auth/google-api/authorize?scopes={{scopes}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "auth",
+            "google-api",
+            "authorize"
+          ],
+          "query": [
+            {
+              "key": "scopes",
+              "value": "{{scopes}}"
+            }
+          ]
+        },
+        "description": "Starts OAuth by redirecting to Google. Run this in a browser-capable Postman flow or open the same URL in your browser."
+      },
+      "response": []
+    },
+    {
+      "name": "OAuth Callback",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/auth/google-api/redirection?code=sample-code&state=sample-state",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "auth",
+            "google-api",
+            "redirection"
+          ],
+          "query": [
+            {
+              "key": "code",
+              "value": "sample-code"
+            },
+            {
+              "key": "state",
+              "value": "sample-state"
+            }
+          ]
+        },
+        "description": "Google redirects here after consent. Do not call manually unless you are replaying a real callback."
+      },
+      "response": []
+    },
+    {
+      "name": "Token Status",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/auth/google-api/token",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "auth",
+            "google-api",
+            "token"
+          ]
+        },
+        "description": "Shows whether a Google OAuth token has been stored locally."
+      },
+      "response": []
+    },
+    {
+      "name": "Google API Proxy Call",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"url\": \"{{googleApiUrl}}\",\n  \"method\": \"{{googleApiMethod}}\",\n  \"body\": {{googleApiBody}}\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/google-api/call",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "google-api",
+            "call"
+          ]
+        },
+        "description": "Uses the locally stored Google access token to call any Google REST API URL."
+      },
+      "response": []
+    },
+    {
+      "name": "Business Profile Category List",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/business-profile/categories?regionCode={{regionCode}}&languageCode={{languageCode}}&view={{categoryView}}&searchTerm={{categorySearchTerm}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "business-profile",
+            "categories"
+          ],
+          "query": [
+            {
+              "key": "regionCode",
+              "value": "{{regionCode}}"
+            },
+            {
+              "key": "languageCode",
+              "value": "{{languageCode}}"
+            },
+            {
+              "key": "view",
+              "value": "{{categoryView}}"
+            },
+            {
+              "key": "searchTerm",
+              "value": "{{categorySearchTerm}}"
+            }
+          ]
+        },
+        "description": "Calls Google Business Profile categories.list through the local server."
+      },
+      "response": []
+    },
+    {
+      "name": "Business Profile Category Batch Get",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/business-profile/categories/batch-get?languageCode={{languageCode}}&view=FULL&names=categories/gcid:cafe&names=categories/gcid:restaurant",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "business-profile",
+            "categories",
+            "batch-get"
+          ],
+          "query": [
+            {
+              "key": "languageCode",
+              "value": "{{languageCode}}"
+            },
+            {
+              "key": "view",
+              "value": "FULL"
+            },
+            {
+              "key": "names",
+              "value": "categories/gcid:cafe"
+            },
+            {
+              "key": "names",
+              "value": "categories/gcid:restaurant"
+            }
+          ]
+        },
+        "description": "Calls Google Business Profile categories.batchGet through the local server."
+      },
+      "response": []
+    }
+  ]
+}
