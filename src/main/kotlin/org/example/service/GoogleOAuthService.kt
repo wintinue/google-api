@@ -39,7 +39,8 @@ class GoogleOAuthService(
         "openid",
         "https://www.googleapis.com/auth/userinfo.email",
         "https://www.googleapis.com/auth/userinfo.profile",
-        "https://www.googleapis.com/auth/business.manage"
+        "https://www.googleapis.com/auth/business.manage",
+        "https://www.googleapis.com/auth/content"
     )
 
     fun buildAuthorization(scopes: List<String>, credentialKey: String?): AuthorizationRequest {

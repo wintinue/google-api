@@ -23,6 +23,8 @@ fun Route.registerRootRoutes(oauthService: GoogleOAuthService) {
                 put("proxyUrl", "$baseUrl/api/v1/google-api/call")
                 put("categoryListUrl", "$baseUrl/api/v1/business-profile/categories")
                 put("categoryBatchGetUrl", "$baseUrl/api/v1/business-profile/categories/batch-get")
+                put("merchantProductsUrl", "$baseUrl/api/v1/merchant/products")
+                put("merchantProductInputsUrl", "$baseUrl/api/v1/merchant/product-inputs")
                 put("swaggerUrl", "$baseUrl/swagger")
                 putJsonArray("availableCredentialKeys") {
                     oauthService.availableCredentialKeys().forEach { add(JsonPrimitive(it)) }
