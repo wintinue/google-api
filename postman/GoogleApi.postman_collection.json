@@ -12,7 +12,7 @@
     },
     {
       "key": "scopes",
-      "value": "openid,https://www.googleapis.com/auth/userinfo.email,https://www.googleapis.com/auth/userinfo.profile,https://www.googleapis.com/auth/business.manage"
+      "value": "openid,https://www.googleapis.com/auth/userinfo.email,https://www.googleapis.com/auth/userinfo.profile,https://www.googleapis.com/auth/business.manage,https://www.googleapis.com/auth/content"
     },
     {
       "key": "googleApiUrl",
@@ -45,6 +45,22 @@
     {
       "key": "categoryNames",
       "value": "categories/gcid:cafe,categories/gcid:restaurant"
+    },
+    {
+      "key": "merchantAccountId",
+      "value": "123456789"
+    },
+    {
+      "key": "merchantDataSourceId",
+      "value": "987654321"
+    },
+    {
+      "key": "merchantProductId",
+      "value": "online~en~US~sku123"
+    },
+    {
+      "key": "merchantUpdateMask",
+      "value": "attributes.title,attributes.description"
     }
   ],
   "item": [
@@ -67,195 +83,385 @@
       "response": []
     },
     {
-      "name": "Start Google OAuth",
+      "name": "Swagger UI",
       "request": {
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "{{baseUrl}}/api/v1/auth/google-api/authorize?scopes={{scopes}}",
+          "raw": "{{baseUrl}}/swagger",
           "host": [
             "{{baseUrl}}"
           ],
           "path": [
-            "api",
-            "v1",
-            "auth",
-            "google-api",
-            "authorize"
-          ],
-          "query": [
-            {
-              "key": "scopes",
-              "value": "{{scopes}}"
-            }
+            "swagger"
           ]
         },
-        "description": "Starts OAuth by redirecting to Google. Run this in a browser-capable Postman flow or open the same URL in your browser."
+        "description": "Opens the local Swagger UI."
       },
       "response": []
     },
     {
-      "name": "OAuth Callback",
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": {
-          "raw": "{{baseUrl}}/api/v1/auth/google-api/redirection?code=sample-code&state=sample-state",
-          "host": [
-            "{{baseUrl}}"
-          ],
-          "path": [
-            "api",
-            "v1",
-            "auth",
-            "google-api",
-            "redirection"
-          ],
-          "query": [
-            {
-              "key": "code",
-              "value": "sample-code"
+      "name": "OAuth",
+      "item": [
+        {
+          "name": "Start Google OAuth",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/google-api/authorize?scopes={{scopes}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "google-api",
+                "authorize"
+              ],
+              "query": [
+                {
+                  "key": "scopes",
+                  "value": "{{scopes}}"
+                }
+              ]
             },
-            {
-              "key": "state",
-              "value": "sample-state"
-            }
-          ]
+            "description": "Starts OAuth by redirecting to Google. Run this in a browser-capable Postman flow or open the same URL in your browser."
+          },
+          "response": []
         },
-        "description": "Google redirects here after consent. Do not call manually unless you are replaying a real callback."
-      },
-      "response": []
+        {
+          "name": "OAuth Callback",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/google-api/redirection?code=sample-code&state=sample-state",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "google-api",
+                "redirection"
+              ],
+              "query": [
+                {
+                  "key": "code",
+                  "value": "sample-code"
+                },
+                {
+                  "key": "state",
+                  "value": "sample-state"
+                }
+              ]
+            },
+            "description": "Google redirects here after consent. Do not call manually unless you are replaying a real callback."
+          },
+          "response": []
+        },
+        {
+          "name": "Token Status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/google-api/token",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "google-api",
+                "token"
+              ]
+            },
+            "description": "Shows whether a Google OAuth token has been stored locally."
+          },
+          "response": []
+        }
+      ]
     },
     {
-      "name": "Token Status",
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": {
-          "raw": "{{baseUrl}}/api/v1/auth/google-api/token",
-          "host": [
-            "{{baseUrl}}"
-          ],
-          "path": [
-            "api",
-            "v1",
-            "auth",
-            "google-api",
-            "token"
-          ]
-        },
-        "description": "Shows whether a Google OAuth token has been stored locally."
-      },
-      "response": []
+      "name": "Google API",
+      "item": [
+        {
+          "name": "Google API Proxy Call",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"url\": \"{{googleApiUrl}}\",\n  \"method\": \"{{googleApiMethod}}\",\n  \"body\": {{googleApiBody}}\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/google-api/call",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "google-api",
+                "call"
+              ]
+            },
+            "description": "Uses the locally stored Google access token to call any Google REST API URL."
+          },
+          "response": []
+        }
+      ]
     },
     {
-      "name": "Google API Proxy Call",
-      "request": {
-        "method": "POST",
-        "header": [
-          {
-            "key": "Content-Type",
-            "value": "application/json"
-          }
-        ],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"url\": \"{{googleApiUrl}}\",\n  \"method\": \"{{googleApiMethod}}\",\n  \"body\": {{googleApiBody}}\n}"
+      "name": "Business Profile",
+      "item": [
+        {
+          "name": "Category List",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/business-profile/categories?regionCode={{regionCode}}&languageCode={{languageCode}}&view={{categoryView}}&searchTerm={{categorySearchTerm}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "business-profile",
+                "categories"
+              ],
+              "query": [
+                {
+                  "key": "regionCode",
+                  "value": "{{regionCode}}"
+                },
+                {
+                  "key": "languageCode",
+                  "value": "{{languageCode}}"
+                },
+                {
+                  "key": "view",
+                  "value": "{{categoryView}}"
+                },
+                {
+                  "key": "searchTerm",
+                  "value": "{{categorySearchTerm}}"
+                }
+              ]
+            },
+            "description": "Calls Google Business Profile categories.list through the local server."
+          },
+          "response": []
         },
-        "url": {
-          "raw": "{{baseUrl}}/api/v1/google-api/call",
-          "host": [
-            "{{baseUrl}}"
-          ],
-          "path": [
-            "api",
-            "v1",
-            "google-api",
-            "call"
-          ]
-        },
-        "description": "Uses the locally stored Google access token to call any Google REST API URL."
-      },
-      "response": []
+        {
+          "name": "Category Batch Get",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/business-profile/categories/batch-get?languageCode={{languageCode}}&view=FULL&names=categories/gcid:cafe&names=categories/gcid:restaurant",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "business-profile",
+                "categories",
+                "batch-get"
+              ],
+              "query": [
+                {
+                  "key": "languageCode",
+                  "value": "{{languageCode}}"
+                },
+                {
+                  "key": "view",
+                  "value": "FULL"
+                },
+                {
+                  "key": "names",
+                  "value": "categories/gcid:cafe"
+                },
+                {
+                  "key": "names",
+                  "value": "categories/gcid:restaurant"
+                }
+              ]
+            },
+            "description": "Calls Google Business Profile categories.batchGet through the local server."
+          },
+          "response": []
+        }
+      ]
     },
     {
-      "name": "Business Profile Category List",
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": {
-          "raw": "{{baseUrl}}/api/v1/business-profile/categories?regionCode={{regionCode}}&languageCode={{languageCode}}&view={{categoryView}}&searchTerm={{categorySearchTerm}}",
-          "host": [
-            "{{baseUrl}}"
-          ],
-          "path": [
-            "api",
-            "v1",
-            "business-profile",
-            "categories"
-          ],
-          "query": [
-            {
-              "key": "regionCode",
-              "value": "{{regionCode}}"
+      "name": "Merchant",
+      "item": [
+        {
+          "name": "List Products",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/merchant/products?accountId={{merchantAccountId}}&pageSize=20",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "merchant",
+                "products"
+              ],
+              "query": [
+                {
+                  "key": "accountId",
+                  "value": "{{merchantAccountId}}"
+                },
+                {
+                  "key": "pageSize",
+                  "value": "20"
+                }
+              ]
             },
-            {
-              "key": "languageCode",
-              "value": "{{languageCode}}"
-            },
-            {
-              "key": "view",
-              "value": "{{categoryView}}"
-            },
-            {
-              "key": "searchTerm",
-              "value": "{{categorySearchTerm}}"
-            }
-          ]
+            "description": "Lists processed Merchant Center products."
+          },
+          "response": []
         },
-        "description": "Calls Google Business Profile categories.list through the local server."
-      },
-      "response": []
-    },
-    {
-      "name": "Business Profile Category Batch Get",
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": {
-          "raw": "{{baseUrl}}/api/v1/business-profile/categories/batch-get?languageCode={{languageCode}}&view=FULL&names=categories/gcid:cafe&names=categories/gcid:restaurant",
-          "host": [
-            "{{baseUrl}}"
-          ],
-          "path": [
-            "api",
-            "v1",
-            "business-profile",
-            "categories",
-            "batch-get"
-          ],
-          "query": [
-            {
-              "key": "languageCode",
-              "value": "{{languageCode}}"
+        {
+          "name": "Get Product",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/merchant/products?accountId={{merchantAccountId}}&productId={{merchantProductId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "merchant",
+                "products"
+              ],
+              "query": [
+                {
+                  "key": "accountId",
+                  "value": "{{merchantAccountId}}"
+                },
+                {
+                  "key": "productId",
+                  "value": "{{merchantProductId}}"
+                }
+              ]
             },
-            {
-              "key": "view",
-              "value": "FULL"
-            },
-            {
-              "key": "names",
-              "value": "categories/gcid:cafe"
-            },
-            {
-              "key": "names",
-              "value": "categories/gcid:restaurant"
-            }
-          ]
+            "description": "Gets one processed Merchant Center product."
+          },
+          "response": []
         },
-        "description": "Calls Google Business Profile categories.batchGet through the local server."
-      },
-      "response": []
+        {
+          "name": "Create Product Input",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"accountId\": \"{{merchantAccountId}}\",\n  \"dataSourceId\": \"{{merchantDataSourceId}}\",\n  \"productInput\": {\n    \"channel\": \"ONLINE\",\n    \"offerId\": \"sku123\",\n    \"contentLanguage\": \"en\",\n    \"feedLabel\": \"US\",\n    \"attributes\": {\n      \"title\": \"Sample Product\",\n      \"description\": \"Created from Postman\",\n      \"link\": \"https://example.com/products/sku123\",\n      \"imageLink\": \"https://example.com/products/sku123.jpg\",\n      \"availability\": \"in stock\",\n      \"condition\": \"new\",\n      \"price\": {\n        \"amountMicros\": \"19990000\",\n        \"currencyCode\": \"USD\"\n      }\n    }\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/merchant/product-inputs",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "merchant",
+                "product-inputs"
+              ]
+            },
+            "description": "Creates a Merchant product input."
+          },
+          "response": []
+        },
+        {
+          "name": "Update Product Input",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"accountId\": \"{{merchantAccountId}}\",\n  \"dataSourceId\": \"{{merchantDataSourceId}}\",\n  \"productInputId\": \"{{merchantProductId}}\",\n  \"updateMask\": \"{{merchantUpdateMask}}\",\n  \"productInput\": {\n    \"name\": \"accounts/{{merchantAccountId}}/productInputs/{{merchantProductId}}\",\n    \"channel\": \"ONLINE\",\n    \"offerId\": \"sku123\",\n    \"contentLanguage\": \"en\",\n    \"feedLabel\": \"US\",\n    \"attributes\": {\n      \"title\": \"Updated Product\",\n      \"description\": \"Updated from Postman\"\n    }\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/merchant/product-inputs",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "merchant",
+                "product-inputs"
+              ]
+            },
+            "description": "Updates a Merchant product input."
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Product Input",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"accountId\": \"{{merchantAccountId}}\",\n  \"dataSourceId\": \"{{merchantDataSourceId}}\",\n  \"productInputId\": \"{{merchantProductId}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/merchant/product-inputs",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "merchant",
+                "product-inputs"
+              ]
+            },
+            "description": "Deletes a Merchant product input."
+          },
+          "response": []
+        }
+      ]
     }
   ]
 }

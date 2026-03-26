@@ -1,0 +1,265 @@
+openapi: 3.0.3
+info:
+  title: GoogleApi Local OAuth Server
+  version: 1.0.0
+  description: |
+    Local Ktor server for Google OAuth, Google API proxy calls, and Google Business Profile category APIs.
+servers:
+  - url: http://localhost:8080
+paths:
+  /:
+    get:
+      summary: Service metadata
+      responses:
+        '200':
+          description: Root metadata
+  /api/v1/auth/google-api/authorize:
+    get:
+      summary: Start Google OAuth
+      description: Redirects the browser to Google OAuth consent.
+      parameters:
+        - in: query
+          name: scopes
+          schema:
+            type: string
+          description: Comma-separated OAuth scopes.
+        - in: query
+          name: credentialKey
+          schema:
+            type: string
+            default: web
+          description: Top-level credential object key from the OAuth client JSON, such as `web` or `web2`.
+      responses:
+        '302':
+          description: Redirect to Google OAuth
+  /api/v1/auth/google-api/redirection:
+    get:
+      summary: Google OAuth callback
+      parameters:
+        - in: query
+          name: code
+          schema:
+            type: string
+        - in: query
+          name: state
+          schema:
+            type: string
+        - in: query
+          name: error
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Token exchange result
+  /api/v1/auth/google-api/token:
+    get:
+      summary: Current token status
+      parameters:
+        - in: query
+          name: credentialKey
+          schema:
+            type: string
+            default: web
+          description: Credential key to use when generating the authorize URL for an unauthorized state.
+      responses:
+        '200':
+          description: Stored token state
+  /api/v1/google-api/call:
+    post:
+      summary: Proxy any Google REST API call
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - url
+              properties:
+                url:
+                  type: string
+                  example: https://www.googleapis.com/oauth2/v2/userinfo
+                method:
+                  type: string
+                  example: GET
+                headers:
+                  type: object
+                  additionalProperties:
+                    type: string
+                body:
+                  type: object
+      responses:
+        '200':
+          description: Proxied Google API response
+  /api/v1/business-profile/categories:
+    get:
+      summary: Business Profile categories.list
+      parameters:
+        - in: query
+          name: regionCode
+          required: true
+          schema:
+            type: string
+            example: KR
+        - in: query
+          name: languageCode
+          required: true
+          schema:
+            type: string
+            example: ko
+        - in: query
+          name: view
+          schema:
+            type: string
+            example: BASIC
+        - in: query
+          name: searchTerm
+          schema:
+            type: string
+            example: 카페
+        - in: query
+          name: pageSize
+          schema:
+            type: integer
+        - in: query
+          name: pageToken
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Category list response
+        '400':
+          description: Missing required query parameters
+  /api/v1/business-profile/categories/batch-get:
+    get:
+      summary: Business Profile categories.batchGet
+      parameters:
+        - in: query
+          name: languageCode
+          required: true
+          schema:
+            type: string
+            example: ko
+        - in: query
+          name: view
+          schema:
+            type: string
+            example: FULL
+        - in: query
+          name: names
+          required: true
+          style: form
+          explode: true
+          schema:
+            type: array
+            items:
+              type: string
+            example:
+              - categories/gcid:cafe
+              - categories/gcid:restaurant
+      responses:
+        '200':
+          description: Category detail batch response
+        '400':
+          description: Missing required query parameters
+  /api/v1/merchant/products:
+    get:
+      summary: Merchant products list or get
+      description: Lists processed Merchant Center products, or returns one product if `productId` is provided.
+      parameters:
+        - in: query
+          name: accountId
+          required: true
+          schema:
+            type: string
+            example: "123456789"
+        - in: query
+          name: productId
+          schema:
+            type: string
+            example: online~en~US~sku123
+        - in: query
+          name: pageSize
+          schema:
+            type: integer
+        - in: query
+          name: pageToken
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Merchant product response
+        '400':
+          description: Missing required query parameters
+  /api/v1/merchant/product-inputs:
+    post:
+      summary: Create Merchant product input
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - accountId
+                - dataSourceId
+                - productInput
+              properties:
+                accountId:
+                  type: string
+                dataSourceId:
+                  type: string
+                productInput:
+                  type: object
+      responses:
+        '200':
+          description: Merchant product input created
+    patch:
+      summary: Update Merchant product input
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - accountId
+                - dataSourceId
+                - productInputId
+                - productInput
+              properties:
+                accountId:
+                  type: string
+                dataSourceId:
+                  type: string
+                productInputId:
+                  type: string
+                updateMask:
+                  type: string
+                productInput:
+                  type: object
+      responses:
+        '200':
+          description: Merchant product input updated
+    delete:
+      summary: Delete Merchant product input
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - accountId
+                - dataSourceId
+                - productInputId
+              properties:
+                accountId:
+                  type: string
+                dataSourceId:
+                  type: string
+                productInputId:
+                  type: string
+      responses:
+        '200':
+          description: Merchant product input deleted
