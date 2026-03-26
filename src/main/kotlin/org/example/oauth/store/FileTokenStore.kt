@@ -1,18 +1,18 @@
-package org.example.store
+package org.example.oauth.store
 
 import java.nio.file.Path
 import java.time.Instant
 import kotlinx.serialization.encodeToString
 import org.example.config.appJson
-import org.example.model.PendingState
-import org.example.model.StoredToken
+import org.example.oauth.model.PendingState
+import org.example.oauth.model.StoredToken
 
 class FileTokenStore(
     private val stateFile: Path = Path.of("data/oauth-state.json"),
     private val tokenFile: Path = Path.of("data/google-oauth-token.json")
 ) : TokenStore {
-    override fun savePendingState(state: String, scopes: List<String>) {
-        writeJson(stateFile, PendingState(state, scopes, Instant.now().epochSecond))
+    override fun savePendingState(state: String, scopes: List<String>, credentialKey: String) {
+        writeJson(stateFile, PendingState(state, scopes, credentialKey, Instant.now().epochSecond))
     }
 
     override fun consumePendingState(state: String): PendingState? {

@@ -14,15 +14,15 @@ import io.ktor.serialization.kotlinx.json.json
 import java.net.URLEncoder
 import java.time.Instant
 import java.util.UUID
-import org.example.config.GoogleOAuthConfig
+import org.example.config.GoogleOAuthConfigProvider
 import org.example.config.appJson
-import org.example.model.AuthorizationRequest
-import org.example.model.GoogleTokenResponse
-import org.example.model.StoredToken
-import org.example.store.TokenStore
+import org.example.oauth.model.AuthorizationRequest
+import org.example.oauth.model.GoogleTokenResponse
+import org.example.oauth.model.StoredToken
+import org.example.oauth.store.TokenStore
 
 class GoogleOAuthService(
-    private val config: GoogleOAuthConfig,
+    private val configProvider: GoogleOAuthConfigProvider,
     private val tokenStore: TokenStore
 ) {
     private val httpClient = HttpClient(CIO) {
@@ -42,9 +42,10 @@ class GoogleOAuthService(
         "https://www.googleapis.com/auth/business.manage"
     )
 
-    fun buildAuthorization(scopes: List<String>): AuthorizationRequest {
+    fun buildAuthorization(scopes: List<String>, credentialKey: String?): AuthorizationRequest {
+        val config = configProvider.resolve(credentialKey)
         val state = UUID.randomUUID().toString()
-        tokenStore.savePendingState(state, scopes)
+        tokenStore.savePendingState(state, scopes, config.credentialKey)
 
         val params = linkedMapOf(
             "client_id" to config.clientId,
@@ -65,6 +66,7 @@ class GoogleOAuthService(
     suspend fun exchangeCode(code: String, state: String): StoredToken {
         val pendingState = tokenStore.consumePendingState(state)
             ?: error("Invalid or expired OAuth state")
+        val config = configProvider.resolve(pendingState.credentialKey)
         val tokenResponse = httpClient.submitForm(
             url = config.tokenUri,
             formParameters = Parameters.build {
@@ -82,7 +84,8 @@ class GoogleOAuthService(
                 refreshToken = tokenResponse.refreshToken,
                 expiresAtEpochSeconds = Instant.now().epochSecond + tokenResponse.expiresIn,
                 scope = tokenResponse.scope?.split(" ") ?: pendingState.scopes,
-                tokenType = tokenResponse.tokenType
+                tokenType = tokenResponse.tokenType,
+                credentialKey = pendingState.credentialKey
             )
         )
     }
@@ -96,6 +99,7 @@ class GoogleOAuthService(
         }
 
         val refreshToken = current.refreshToken ?: error("Refresh token missing. Re-authorize with prompt=consent.")
+        val config = configProvider.resolve(current.credentialKey)
         val refreshed = httpClient.submitForm(
             url = config.tokenUri,
             formParameters = Parameters.build {
@@ -112,8 +116,20 @@ class GoogleOAuthService(
                 expiresAtEpochSeconds = Instant.now().epochSecond + refreshed.expiresIn,
                 tokenType = refreshed.tokenType,
                 scope = refreshed.scope?.split(" ") ?: current.scope,
-                refreshToken = refreshed.refreshToken ?: current.refreshToken
+                refreshToken = refreshed.refreshToken ?: current.refreshToken,
+                credentialKey = current.credentialKey
             )
         )
+    }
+
+    fun defaultCredentialKey(): String = configProvider.defaultCredentialKey()
+
+    fun availableCredentialKeys(): List<String> = configProvider.availableCredentialKeys()
+
+    fun baseUrl(): String = configProvider.baseUrl
+
+    fun authorizeUrl(credentialKey: String?): String {
+        val resolvedKey = credentialKey?.takeIf { it.isNotBlank() } ?: defaultCredentialKey()
+        return "${configProvider.baseUrl}/api/v1/auth/google-api/authorize?credentialKey=$resolvedKey"
     }
 }

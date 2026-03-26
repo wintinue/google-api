@@ -1,8 +1,7 @@
-package org.example.model
+package org.example.oauth.model
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.JsonElement
 
 data class AuthorizationRequest(val url: String, val state: String)
 
@@ -10,6 +9,7 @@ data class AuthorizationRequest(val url: String, val state: String)
 data class PendingState(
     val state: String,
     val scopes: List<String>,
+    val credentialKey: String = "web",
     val createdAtEpochSeconds: Long
 )
 
@@ -19,7 +19,8 @@ data class StoredToken(
     val refreshToken: String? = null,
     val expiresAtEpochSeconds: Long,
     val scope: List<String> = emptyList(),
-    val tokenType: String = "Bearer"
+    val tokenType: String = "Bearer",
+    val credentialKey: String = "web"
 )
 
 @Serializable
@@ -33,12 +34,4 @@ data class GoogleTokenResponse(
     val scope: String? = null,
     @SerialName("token_type")
     val tokenType: String = "Bearer"
-)
-
-@Serializable
-data class GoogleApiProxyRequest(
-    val url: String,
-    val method: String = "GET",
-    val headers: Map<String, String>? = null,
-    val body: JsonElement? = null
 )

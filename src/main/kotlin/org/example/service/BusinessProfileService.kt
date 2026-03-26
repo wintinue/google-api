@@ -1,10 +1,10 @@
 package org.example.service
 
 import io.ktor.http.encodeURLParameter
-import org.example.model.CategoryBatchGetQuery
-import org.example.model.CategoryListQuery
-import org.example.model.GoogleApiProxyRequest
-import org.example.model.GoogleApiProxyResponse
+import org.example.businessprofile.category.model.CategoryBatchGetQuery
+import org.example.businessprofile.category.model.CategoryListQuery
+import org.example.googleapi.model.GoogleApiProxyRequest
+import org.example.googleapi.model.GoogleApiProxyResponse
 
 class BusinessProfileService(
     private val apiProxyService: GoogleApiProxyService

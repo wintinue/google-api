@@ -19,8 +19,8 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
 import org.example.config.appJson
-import org.example.model.GoogleApiProxyRequest
-import org.example.model.GoogleApiProxyResponse
+import org.example.googleapi.model.GoogleApiProxyRequest
+import org.example.googleapi.model.GoogleApiProxyResponse
 
 class GoogleApiProxyService(
     private val oauthService: GoogleOAuthService

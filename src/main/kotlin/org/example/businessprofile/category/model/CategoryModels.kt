@@ -1,7 +1,6 @@
-package org.example.model
+package org.example.businessprofile.category.model
 
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.JsonElement
 
 @Serializable
 data class CategoryListQuery(
@@ -18,9 +17,4 @@ data class CategoryBatchGetQuery(
     val names: List<String>,
     val languageCode: String,
     val view: String = "FULL"
-)
-
-data class GoogleApiProxyResponse(
-    val statusCode: Int,
-    val payload: JsonElement
 )
