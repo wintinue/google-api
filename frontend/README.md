@@ -1,6 +1,17 @@
-# 동그라미 분식 프론트엔드
+# Frontend Sites
 
-React 19 + Vite 8 + TypeScript 6 기반의 단일 페이지 웹사이트입니다. 이 폴더만 별도 프로젝트로 연결하면 Vercel에서 정적 사이트로 배포할 수 있습니다.
+React 19 + Vite 8 + TypeScript 6 기반의 멀티 사이트 프론트엔드입니다. 각 사이트는 `apps/` 아래에서 HTML, React 코드, 사이트별 자산을 독립적으로 관리합니다.
+
+## Structure
+
+- `apps/donggeurami/`
+  동그라미분식 사이트
+- `apps/testy-market/`
+  문서형 스타일의 로컬 프로듀스 마켓 사이트
+- `index.html`
+  사이트 선택용 루트 페이지
+- `vite.config.ts`
+  멀티 페이지 엔트리 설정
 
 ## 실행
 
@@ -21,7 +32,11 @@ http://localhost:5173
 npm run build
 ```
 
-산출물은 `dist/` 에 생성됩니다.
+산출물은 `dist/` 에 생성되며, 각 사이트는 아래처럼 출력됩니다.
+
+- `dist/index.html`
+- `dist/apps/donggeurami/index.html`
+- `dist/apps/testy-market/index.html`
 
 ## Vercel 설정
 
@@ -30,4 +45,7 @@ npm run build
 - Build Command: `npm run build`
 - Output Directory: `dist`
 
-SPA 라우팅 대응을 위해 `vercel.json` 에 모든 경로를 `index.html` 로 rewrite 하도록 설정했습니다.
+멀티 페이지 사이트라서 루트 페이지에서 각 사이트로 이동하거나, 각 경로를 직접 열면 됩니다.
+
+- `/apps/donggeurami/`
+- `/apps/testy-market/`

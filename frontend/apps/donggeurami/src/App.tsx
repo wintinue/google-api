@@ -1,10 +1,15 @@
 import { useEffect, useState } from "react";
+import comingSoonImage from "../assets/images/menu/coming_soon.png";
+import eomukImage from "../assets/images/menu/eomuk.png";
+import sundaeImage from "../assets/images/menu/sundae.png";
+import tteokbokkiImage from "../assets/images/menu/tteokbokki.png";
+import exteriorImage from "../assets/images/store/exterior.png";
 
 const profile = {
   name: "동그라미분식",
   description: "맛있는 분식",
   location: "서울특별시 중구 남대문로 36",
-  heroImage: "/images/store/exterior.png",
+  heroImage: exteriorImage,
   ceo: "이춘화"
 };
 
@@ -24,28 +29,28 @@ const menuItems = [
     category: "분식",
     price: "3,500원",
     description: "동그라미분식의 대표 메뉴. 매콤하게 즐기는 기본 분식 한 접시.",
-    image: "/images/menu/tteokbokki.png"
+    image: tteokbokkiImage
   },
   {
     name: "어묵",
     category: "분식",
     price: "3,000원",
     description: "따뜻한 국물과 함께 편하게 즐기는 기본 어묵",
-    image: "/images/menu/eomuk.png"
+    image: eomukImage
   },
   {
     name: "순대",
     category: "분식",
     price: "4,500원",
     description: "쫄깃한 식감과 담백한 맛으로 떡볶이와 잘 어울리는 순대",
-    image: "/images/menu/sundae.png"
+    image: sundaeImage
   },
   {
     name: "신메뉴 개발 중",
     category: "준비 중",
     price: "업데이트 예정",
     description: "맛있는 메뉴를 준비하고 있습니다.",
-    image: "/images/menu/coming_soon.png"
+    image: comingSoonImage
   }
 ];
 
