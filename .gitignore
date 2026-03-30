@@ -45,5 +45,13 @@ bin/
 ### Mac OS ###
 .DS_Store
 
-credentials/
-data/
+backend/credentials/
+backend/data/
+
+### Frontend ###
+frontend/node_modules/
+frontend/dist/
+frontend/.vercel/
+frontend/*.tsbuildinfo
+frontend/*.js
+frontend/*.d.ts
