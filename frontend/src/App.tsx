@@ -1,8 +1,11 @@
+import { useEffect, useState } from "react";
+
 const profile = {
   name: "동그라미분식",
   description: "맛있는 분식",
   location: "서울특별시 중구 남대문로 36",
-  heroImage: "/images/store/exterior.png"
+  heroImage: "/images/store/exterior.png",
+  ceo: "이춘화"
 };
 
 const businessHours = [
@@ -24,6 +27,20 @@ const menuItems = [
     image: "/images/menu/tteokbokki.png"
   },
   {
+    name: "어묵",
+    category: "분식",
+    price: "3,000원",
+    description: "따뜻한 국물과 함께 편하게 즐기는 기본 어묵",
+    image: "/images/menu/eomuk.png"
+  },
+  {
+    name: "순대",
+    category: "분식",
+    price: "4,500원",
+    description: "쫄깃한 식감과 담백한 맛으로 떡볶이와 잘 어울리는 순대",
+    image: "/images/menu/sundae.png"
+  },
+  {
     name: "신메뉴 개발 중",
     category: "준비 중",
     price: "업데이트 예정",
@@ -33,8 +50,23 @@ const menuItems = [
 ];
 
 function App() {
+  const [showTopButton, setShowTopButton] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowTopButton(window.scrollY > 24);
+    };
+
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
   return (
-    <div className="page-shell">
+    <div id="top" className="page-shell">
       <header className="hero">
         <div className="hero__content">
           <h1>{profile.name}</h1>
@@ -120,14 +152,22 @@ function App() {
                   <dd>{profile.location}</dd>
                 </div>
                 <div>
-                  <dt>설명</dt>
-                  <dd>{profile.description}</dd>
+                  <dt>대표자</dt>
+                  <dd>{profile.ceo}</dd>
                 </div>
               </dl>
             </article>
           </div>
         </section>
       </main>
+
+      <a
+        href="#top"
+        className={`floating-top-button${showTopButton ? " is-visible" : ""}`}
+        aria-label="맨 위로 이동"
+      >
+        ⬆
+      </a>
     </div>
   );
 }
