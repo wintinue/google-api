@@ -49,9 +49,7 @@ backend/credentials/
 backend/data/
 
 ### Frontend ###
-frontend/node_modules/
-frontend/dist/
-frontend/.vercel/
-frontend/*.tsbuildinfo
-frontend/*.js
-frontend/*.d.ts
+frontend/**/node_modules/
+frontend/**/dist/
+frontend/**/.vercel/
+frontend/**/*.tsbuildinfo
