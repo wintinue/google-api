@@ -1,6 +1,6 @@
 # Google API OAuth Server
 
-로컬에서 Google OAuth 인증을 받고, 저장된 토큰으로 Google REST API를 호출하는 Kotlin/Ktor 서버입니다. Google Business Profile `categories.list`, `categories:batchGet` 와 Google Merchant 제품 조회/등록/수정/삭제용 엔드포인트를 포함합니다.
+로컬에서 Google OAuth 인증을 받고, 저장된 토큰으로 Google REST API를 호출하는 Kotlin/Ktor 서버입니다. Google Business Profile `accounts.list`, `categories.list`, `categories:batchGet`, `locations.list/get/patch/delete` 와 Google Merchant `accounts.list`, 제품 조회/등록/수정/삭제용 엔드포인트를 포함합니다.
 
 Swagger UI는 `http://localhost:8080/swagger` 에서 확인할 수 있습니다.
 
@@ -80,6 +80,14 @@ http://localhost:8080/api/v1/auth/google-api/authorize?scopes=https://www.google
 
 credential JSON 안에 `web`, `web2`, `web3` 같은 최상위 객체가 추가되면 같은 이름을 `credentialKey`로 넘겨 선택할 수 있습니다.
 
+## Business Profile account examples
+
+계정 목록 조회:
+
+```bash
+curl "http://localhost:8080/api/v1/business-profile/accounts?pageSize=20"
+```
+
 ## Business Profile category examples
 
 카테고리 목록 조회:
@@ -94,7 +102,53 @@ curl "http://localhost:8080/api/v1/business-profile/categories?regionCode=KR&lan
 curl "http://localhost:8080/api/v1/business-profile/categories/batch-get?languageCode=ko&view=FULL&names=categories/gcid:restaurant&names=categories/gcid:cafe"
 ```
 
+## Business Profile location examples
+
+위치 목록 조회:
+
+```bash
+curl "http://localhost:8080/api/v1/business-profile/locations?accountId=123456789&readMask=name,title,storeCode,websiteUri&pageSize=20"
+```
+
+위치 단건 조회:
+
+```bash
+curl "http://localhost:8080/api/v1/business-profile/locations?locationId=12345678901234567890&readMask=name,title,storeCode,websiteUri,phoneNumbers"
+```
+
+위치 수정:
+
+```bash
+curl -X PATCH http://localhost:8080/api/v1/business-profile/locations \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "locationId": "12345678901234567890",
+    "updateMask": "title,websiteUri",
+    "location": {
+      "name": "locations/12345678901234567890",
+      "title": "Updated Store Name",
+      "websiteUri": "https://example.com/store"
+    }
+  }'
+```
+
+위치 삭제:
+
+```bash
+curl -X DELETE http://localhost:8080/api/v1/business-profile/locations \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "locationId": "12345678901234567890"
+  }'
+```
+
 ## Merchant product examples
+
+Merchant Center 계정 목록 조회:
+
+```bash
+curl "http://localhost:8080/api/v1/merchant/accounts?pageSize=50"
+```
 
 처리된 상품 목록 조회:
 
@@ -180,7 +234,7 @@ Import files:
 - `postman/GoogleApi.postman_collection.json`
 - `postman/GoogleApi.local.postman_environment.json`
 
-카테고리 조회는 컬렉션의 `Business Profile` 폴더에서, Merchant 상품 요청은 `Merchant` 폴더에서 바로 실행할 수 있습니다.
+계정/카테고리/위치 조회는 컬렉션의 `Business Profile` 폴더에서, Merchant 계정/상품 요청은 `Merchant` 폴더에서 바로 실행할 수 있습니다.
 
 ## Environment variables
 

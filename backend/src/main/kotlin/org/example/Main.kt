@@ -8,6 +8,7 @@ import org.example.oauth.store.FileTokenStore
 import org.example.service.BusinessProfileService
 import org.example.service.GoogleApiProxyService
 import org.example.service.GoogleOAuthService
+import org.example.service.MerchantAccountService
 import org.example.service.MerchantProductService
 
 fun main() {
@@ -17,6 +18,7 @@ fun main() {
     val oauthService = GoogleOAuthService(configProvider, tokenStore)
     val apiProxyService = GoogleApiProxyService(oauthService)
     val businessProfileService = BusinessProfileService(apiProxyService)
+    val merchantAccountService = MerchantAccountService(apiProxyService)
     val merchantProductService = MerchantProductService(apiProxyService)
 
     embeddedServer(Netty, port = port) {
@@ -24,6 +26,7 @@ fun main() {
             oauthService = oauthService,
             apiProxyService = apiProxyService,
             businessProfileService = businessProfileService,
+            merchantAccountService = merchantAccountService,
             merchantProductService = merchantProductService
         )
     }.start(wait = true)

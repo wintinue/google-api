@@ -47,8 +47,32 @@
       "value": "categories/gcid:cafe,categories/gcid:restaurant"
     },
     {
+      "key": "businessAccountId",
+      "value": "123456789"
+    },
+    {
+      "key": "businessParentAccount",
+      "value": "accounts/123456789"
+    },
+    {
+      "key": "businessLocationId",
+      "value": "12345678901234567890"
+    },
+    {
+      "key": "businessLocationReadMask",
+      "value": "name,title,storeCode,websiteUri"
+    },
+    {
+      "key": "businessLocationUpdateMask",
+      "value": "title,websiteUri"
+    },
+    {
       "key": "merchantAccountId",
       "value": "123456789"
+    },
+    {
+      "key": "merchantAccountFilter",
+      "value": ""
     },
     {
       "key": "merchantDataSourceId",
@@ -226,6 +250,33 @@
       "name": "Business Profile",
       "item": [
         {
+          "name": "List Accounts",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/business-profile/accounts?pageSize=20",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "business-profile",
+                "accounts"
+              ],
+              "query": [
+                {
+                  "key": "pageSize",
+                  "value": "20"
+                }
+              ]
+            },
+            "description": "Calls Google Business Profile accounts.list through the local server."
+          },
+          "response": []
+        },
+        {
           "name": "Category List",
           "request": {
             "method": "GET",
@@ -303,12 +354,165 @@
             "description": "Calls Google Business Profile categories.batchGet through the local server."
           },
           "response": []
+        },
+        {
+          "name": "List Locations",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/business-profile/locations?accountId={{businessAccountId}}&readMask={{businessLocationReadMask}}&pageSize=20",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "business-profile",
+                "locations"
+              ],
+              "query": [
+                {
+                  "key": "accountId",
+                  "value": "{{businessAccountId}}"
+                },
+                {
+                  "key": "readMask",
+                  "value": "{{businessLocationReadMask}}"
+                },
+                {
+                  "key": "pageSize",
+                  "value": "20"
+                }
+              ]
+            },
+            "description": "Calls Google Business Profile accounts.locations.list through the local server."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Location",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/business-profile/locations?locationId={{businessLocationId}}&readMask={{businessLocationReadMask}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "business-profile",
+                "locations"
+              ],
+              "query": [
+                {
+                  "key": "locationId",
+                  "value": "{{businessLocationId}}"
+                },
+                {
+                  "key": "readMask",
+                  "value": "{{businessLocationReadMask}}"
+                }
+              ]
+            },
+            "description": "Calls Google Business Profile locations.get through the local server."
+          },
+          "response": []
+        },
+        {
+          "name": "Update Location",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"locationId\": \"{{businessLocationId}}\",\n  \"updateMask\": \"{{businessLocationUpdateMask}}\",\n  \"location\": {\n    \"name\": \"locations/{{businessLocationId}}\",\n    \"title\": \"Updated Store Name\",\n    \"websiteUri\": \"https://example.com/store\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/business-profile/locations",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "business-profile",
+                "locations"
+              ]
+            },
+            "description": "Calls Google Business Profile locations.patch through the local server."
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Location",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"locationId\": \"{{businessLocationId}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/business-profile/locations",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "business-profile",
+                "locations"
+              ]
+            },
+            "description": "Calls Google Business Profile locations.delete through the local server."
+          },
+          "response": []
         }
       ]
     },
     {
       "name": "Merchant",
       "item": [
+        {
+          "name": "List Accounts",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/merchant/accounts?pageSize=50",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "merchant",
+                "accounts"
+              ],
+              "query": [
+                {
+                  "key": "pageSize",
+                  "value": "50"
+                }
+              ]
+            },
+            "description": "Lists Merchant Center accounts accessible to the authenticated user."
+          },
+          "response": []
+        },
         {
           "name": "List Products",
           "request": {

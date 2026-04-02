@@ -3,18 +3,33 @@ info:
   title: GoogleApi Local OAuth Server
   version: 1.0.0
   description: |
-    Local Ktor server for Google OAuth, Google API proxy calls, and Google Business Profile category APIs.
+    Local Ktor server for Google OAuth, Google API proxy calls, Google Business Profile account/category/location APIs, and Google Merchant account/product APIs.
 servers:
   - url: http://localhost:8080
+tags:
+  - name: System
+    description: Service metadata and local server utility endpoints.
+  - name: OAuth
+    description: Google OAuth authorization, callback, and token status endpoints.
+  - name: Google API
+    description: Generic authenticated proxy endpoints for Google REST APIs.
+  - name: Business Profile
+    description: Google Business Profile account, category, and location endpoints.
+  - name: Merchant
+    description: Google Merchant account and product endpoints.
 paths:
   /:
     get:
+      tags:
+        - System
       summary: Service metadata
       responses:
         '200':
           description: Root metadata
   /api/v1/auth/google-api/authorize:
     get:
+      tags:
+        - OAuth
       summary: Start Google OAuth
       description: Redirects the browser to Google OAuth consent.
       parameters:
@@ -34,6 +49,8 @@ paths:
           description: Redirect to Google OAuth
   /api/v1/auth/google-api/redirection:
     get:
+      tags:
+        - OAuth
       summary: Google OAuth callback
       parameters:
         - in: query
@@ -53,6 +70,8 @@ paths:
           description: Token exchange result
   /api/v1/auth/google-api/token:
     get:
+      tags:
+        - OAuth
       summary: Current token status
       parameters:
         - in: query
@@ -66,6 +85,8 @@ paths:
           description: Stored token state
   /api/v1/google-api/call:
     post:
+      tags:
+        - Google API
       summary: Proxy any Google REST API call
       requestBody:
         required: true
@@ -93,6 +114,8 @@ paths:
           description: Proxied Google API response
   /api/v1/business-profile/categories:
     get:
+      tags:
+        - Business Profile
       summary: Business Profile categories.list
       parameters:
         - in: query
@@ -130,8 +153,35 @@ paths:
           description: Category list response
         '400':
           description: Missing required query parameters
+  /api/v1/business-profile/accounts:
+    get:
+      tags:
+        - Business Profile
+      summary: Business Profile accounts.list
+      description: Lists Business Profile accounts accessible to the authenticated user.
+      parameters:
+        - in: query
+          name: parentAccount
+          schema:
+            type: string
+            example: "accounts/123456789"
+          description: Optional parent account resource name for directly accessible child accounts.
+        - in: query
+          name: pageSize
+          schema:
+            type: integer
+            example: 20
+        - in: query
+          name: pageToken
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Business Profile account list response
   /api/v1/business-profile/categories/batch-get:
     get:
+      tags:
+        - Business Profile
       summary: Business Profile categories.batchGet
       parameters:
         - in: query
@@ -162,8 +212,129 @@ paths:
           description: Category detail batch response
         '400':
           description: Missing required query parameters
+  /api/v1/business-profile/locations:
+    get:
+      tags:
+        - Business Profile
+      summary: Business Profile locations list or get
+      description: Lists locations for an account, or returns one location if `locationId` is provided.
+      parameters:
+        - in: query
+          name: accountId
+          schema:
+            type: string
+            example: "123456789"
+          description: Required when `locationId` is not provided.
+        - in: query
+          name: locationId
+          schema:
+            type: string
+            example: "12345678901234567890"
+          description: Optional. If provided, the endpoint calls `locations.get`.
+        - in: query
+          name: readMask
+          required: true
+          schema:
+            type: string
+            example: "name,title,storeCode,websiteUri"
+        - in: query
+          name: pageSize
+          schema:
+            type: integer
+        - in: query
+          name: pageToken
+          schema:
+            type: string
+        - in: query
+          name: filter
+          schema:
+            type: string
+            example: "title=My Store"
+        - in: query
+          name: orderBy
+          schema:
+            type: string
+            example: "title desc"
+      responses:
+        '200':
+          description: Location list or detail response
+        '400':
+          description: Missing required query parameters
+    patch:
+      tags:
+        - Business Profile
+      summary: Business Profile locations.patch
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - locationId
+                - updateMask
+                - location
+              properties:
+                locationId:
+                  type: string
+                  example: "12345678901234567890"
+                updateMask:
+                  type: string
+                  example: "title,websiteUri"
+                validateOnly:
+                  type: boolean
+                location:
+                  type: object
+      responses:
+        '200':
+          description: Updated location response
+    delete:
+      tags:
+        - Business Profile
+      summary: Business Profile locations.delete
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - locationId
+              properties:
+                locationId:
+                  type: string
+                  example: "12345678901234567890"
+      responses:
+        '200':
+          description: Location deleted
+  /api/v1/merchant/accounts:
+    get:
+      tags:
+        - Merchant
+      summary: Merchant accounts.list
+      description: Lists Merchant Center accounts accessible to the authenticated user.
+      parameters:
+        - in: query
+          name: pageSize
+          schema:
+            type: integer
+            example: 50
+        - in: query
+          name: pageToken
+          schema:
+            type: string
+        - in: query
+          name: filter
+          schema:
+            type: string
+            example: "accountName=\"Sample Store\""
+      responses:
+        '200':
+          description: Merchant account list response
   /api/v1/merchant/products:
     get:
+      tags:
+        - Merchant
       summary: Merchant products list or get
       description: Lists processed Merchant Center products, or returns one product if `productId` is provided.
       parameters:
@@ -193,6 +364,8 @@ paths:
           description: Missing required query parameters
   /api/v1/merchant/product-inputs:
     post:
+      tags:
+        - Merchant
       summary: Create Merchant product input
       requestBody:
         required: true
@@ -215,6 +388,8 @@ paths:
         '200':
           description: Merchant product input created
     patch:
+      tags:
+        - Merchant
       summary: Update Merchant product input
       requestBody:
         required: true
@@ -242,6 +417,8 @@ paths:
         '200':
           description: Merchant product input updated
     delete:
+      tags:
+        - Merchant
       summary: Delete Merchant product input
       requestBody:
         required: true
