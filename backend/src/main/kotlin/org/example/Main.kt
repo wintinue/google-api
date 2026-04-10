@@ -12,7 +12,7 @@ import org.example.service.MerchantAccountService
 import org.example.service.MerchantProductService
 
 fun main() {
-    val port = System.getenv("PORT")?.toIntOrNull() ?: 8080
+    val port = System.getenv("PORT")?.toIntOrNull() ?: 8088
     val configProvider = GoogleOAuthConfigProvider.load()
     val tokenStore = FileTokenStore()
     val oauthService = GoogleOAuthService(configProvider, tokenStore)
