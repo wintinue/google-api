@@ -45,8 +45,10 @@ bin/
 ### Mac OS ###
 .DS_Store
 
-backend/credentials/
-backend/data/
+backend/credentials/*
+!backend/credentials/.gitkeep
+backend/data/*
+!backend/data/.gitkeep
 
 ### Frontend ###
 frontend/**/node_modules/
