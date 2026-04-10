@@ -5,7 +5,7 @@ info:
   description: |
     Local Ktor server for Google OAuth, Google API proxy calls, Google Business Profile account/category/location APIs, and Google Merchant account/product APIs.
 servers:
-  - url: http://localhost:8080
+  - url: http://localhost:8088
 tags:
   - name: System
     description: Service metadata and local server utility endpoints.
@@ -42,8 +42,11 @@ paths:
           name: credentialKey
           schema:
             type: string
-            default: web
-          description: Top-level credential object key from the OAuth client JSON, such as `web` or `web2`.
+            default: default
+            enum: [default, kge, ljj, hq]
+          description: |
+            Top-level credential object key from `credentials/google-oauth-client.json`.
+            Omit to use the server default (`default`). Override with `GOOGLE_OAUTH_CLIENT_KEY` env var.
       responses:
         '302':
           description: Redirect to Google OAuth
@@ -73,16 +76,66 @@ paths:
       tags:
         - OAuth
       summary: Current token status
+      description: |
+        Returns the cached OAuth token if the server has completed an authorization flow,
+        otherwise returns an `authorized: false` payload that includes an `authorizeUrl`
+        the caller can visit to start the OAuth consent flow. The token, when present,
+        is the most recently exchanged token regardless of which credential key produced it.
       parameters:
         - in: query
           name: credentialKey
           schema:
             type: string
-            default: web
-          description: Credential key to use when generating the authorize URL for an unauthorized state.
+            default: default
+            enum: [default, kge, ljj, hq]
+          description: |
+            Credential key used to build the `authorizeUrl` returned in the unauthorized response.
+            Ignored when a cached token already exists.
       responses:
         '200':
           description: Stored token state
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                    description: Authorized — a token is cached.
+                    properties:
+                      authorized:
+                        type: boolean
+                        example: true
+                      accessToken:
+                        type: string
+                      credentialKey:
+                        type: string
+                        example: default
+                      expiresAt:
+                        type: integer
+                        format: int64
+                        description: Token expiration in epoch seconds.
+                      hasRefreshToken:
+                        type: boolean
+                      scopes:
+                        type: array
+                        items:
+                          type: string
+                  - type: object
+                    description: Unauthorized — no token cached yet.
+                    properties:
+                      authorized:
+                        type: boolean
+                        example: false
+                      defaultCredentialKey:
+                        type: string
+                        example: default
+                      authorizeUrl:
+                        type: string
+                        description: URL to begin the OAuth consent flow with the requested credential key.
+                      availableCredentialKeys:
+                        type: array
+                        items:
+                          type: string
+                        example: [default, hq, kge, ljj]
   /api/v1/google-api/call:
     post:
       tags:

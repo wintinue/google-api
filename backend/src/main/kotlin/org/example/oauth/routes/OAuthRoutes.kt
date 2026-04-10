@@ -75,6 +75,7 @@ fun Route.registerOAuthRoutes(
 
         call.respond(buildJsonObject {
             put("authorized", true)
+            put("accessToken", token.accessToken)
             put("credentialKey", token.credentialKey)
             put("expiresAt", token.expiresAtEpochSeconds)
             put("hasRefreshToken", !token.refreshToken.isNullOrBlank())

@@ -29,7 +29,6 @@ class GoogleOAuthConfigProvider(
                 }"
             )
         val redirectUri = System.getenv("GOOGLE_OAUTH_REDIRECT_URI")
-            ?: secret.redirectUris.firstOrNull()
             ?: "$baseUrl/api/v1/auth/google-api/redirection"
 
         return GoogleOAuthConfig(
@@ -49,10 +48,10 @@ class GoogleOAuthConfigProvider(
 
     companion object {
         fun load(): GoogleOAuthConfigProvider {
-            val baseUrl = System.getenv("APP_BASE_URL") ?: "http://localhost:8080"
+            val baseUrl = System.getenv("APP_BASE_URL") ?: "http://localhost:8088"
             val credentialPath = System.getenv("GOOGLE_OAUTH_CLIENT_SECRET_PATH")
                 ?: "credentials/google-oauth-client.json"
-            val defaultCredentialKey = System.getenv("GOOGLE_OAUTH_CLIENT_KEY") ?: "web"
+            val defaultCredentialKey = System.getenv("GOOGLE_OAUTH_CLIENT_KEY") ?: "default"
             val credentialFile = File(credentialPath)
             require(credentialFile.exists()) {
                 "OAuth credential file not found: ${credentialFile.absolutePath}"
